@@ -1,0 +1,72 @@
+<div ng-hide="vm.currentUser.userType != 'admin'">
+  <page-header content="vm.pageHeader"></page-header>
+  
+  <h3>{{ vm.message }}</h3>
+  
+  <div role="alert" ng-show="vm.formError" class="alert alert-danger"><strong>Error! </strong>{{ vm.formError }}</div>
+  
+  <div ng-show="vm.message == ''">
+    <table class="table table-bordered table-hover table-condensed table-striped">
+      <tr style="font-weight: bold">
+        <td class="col-xs-2">Batch Job</td>
+        <td class="col-xs-2">Start Time</td>
+        <td class="col-xs-2">End Time</td>
+        <td class="col-xs-2">Status</td>
+        <td class="col-xs-2">Error Message</td>
+        <td class="col-xs-1">Action</td>
+      </tr>
+      <tr ng-repeat="row in vm.data | orderBy:'cardNumber'">
+        <td>
+          <span e-form="rowform">
+            {{ row.batchJob }}
+          </span>
+        </td>
+        <td>
+          <span e-form="rowform">
+            {{ row.startTime }}
+          </span>
+        </td>
+        <td>
+          <span e-form="rowform">
+            {{ row.endTime }}
+          </span>
+        </td>
+        <td>
+          <span e-form="rowform">
+            <div ng-switch on="row.status">
+              <div ng-switch-when="SUCCESS">
+                <div class="alert alert-success">
+                  {{ row.status }}
+                </div>
+              </div>
+              <div ng-switch-when="ERROR">
+                <div class="alert alert-danger">
+                  {{ row.status }}
+                </div>
+              </div>
+              <div ng-switch-default>
+                {{ row.status }}
+              </div>
+            </div>
+          </span>
+        </td>
+        <td>
+          <span e-form="rowform">
+            {{ row.errorMessage }}
+          </span>
+        </td>
+        <td style="white-space: nowrap">
+          <form editable-form name="rowform" ng-show="rowform.$visible" class="form-buttons form-inline">
+            <button type="button" class="btn btn-danger">del</button>
+            <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">Cancel</button>
+          </form>
+          <div class="buttons" ng-show="!rowform.$visible">
+            <button type="button" class="btn btn-primary" ng-click="rowform.$show()">Edit</button>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  
+  <footer-generic></footer-generic>
+</div>

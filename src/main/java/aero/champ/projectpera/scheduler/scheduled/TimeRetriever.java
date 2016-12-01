@@ -1,6 +1,8 @@
 package aero.champ.projectpera.scheduler.scheduled;
 
+import org.quartz.JobExecutionException;
+
 public interface TimeRetriever {
 
-	public int saveTimeToday();
+	public void saveTime() throws JobExecutionException;
 }

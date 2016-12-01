@@ -1,8 +1,6 @@
 package aero.champ.projectpera.scheduler.scheduled;
 
-import java.util.List;
-
-import aero.champ.projectpera.BO.EmployeeDetails;
+import org.quartz.JobExecutionException;
 
 /**
  * The Interface ReportGenerator.
@@ -15,6 +13,6 @@ public interface ReportGenerator {
 	 *
 	 * @param employeeDetails the employee details
 	 */
-	public void generateCutOffReport(List<EmployeeDetails> employeeDetails);
+	public void generateCutOffReport() throws JobExecutionException;
 
 }

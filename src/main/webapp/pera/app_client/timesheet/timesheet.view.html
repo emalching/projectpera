@@ -1,0 +1,83 @@
+<navigation></navigation>
+
+<div class="container" ng-hide="!vm.isLoggedIn">
+  <page-header content="vm.pageHeader"></page-header>
+  
+  <h3 class="error">{{ vm.message }}</h3>
+  
+  <div role="alert" ng-show="vm.formError" class="alert alert-danger"><strong>Error! </strong>{{ vm.formError }}</div>
+  
+  <form editable-form name="tableform" ng-show="vm.message == ''" oncancel="cancel()" onaftersave="updateTimesheet()">
+    <table class="table table-bordered table-hover table-condensed table-striped">
+      <tr style="font-weight: bold">
+        <td class="col-xs-2">Work Date</td>
+        <td class="col-xs-2">Time In</td>
+        <td class="col-xs-2">Time Out</td>
+        <td class="col-xs-2">New Time In</td>
+        <td class="col-xs-2">New Time Out</td>
+        <td class="col-xs-2">Remarks</td>
+      </tr>
+      <tr ng-repeat="row in vm.data.staff.timeInOutList  | filter: vm.criteriaMatch(vm.selectedDateRange)">
+        <td>
+          <span e-form="tableform">
+            {{ row.workDate }}
+          </span>
+        </td>
+        <td>
+          <span e-form="tableform">
+            {{ row.timeIn }}
+          </span>
+        </td>
+        <td>
+          <span e-form="tableform">
+            {{ row.timeOut }}
+          </span>
+        </td>
+        <td>
+          <span ng-show="!tableform.$visible">{{ row.timeInOverride }}</span>
+          <div class="form-group" ng-show="tableform.$visible">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="glyphicon glyphicon-time"></i>
+                </span>
+                <input type="text" class="form-control input-sm" datetimepicker datetimepicker-options="{format:'HH:mm:ss'}" name="timeInOverride" ng-model="row.timeInOverride">
+              </div>
+          </div>
+        </td>
+        <td>
+          <span ng-show="!tableform.$visible">{{ row.timeOutOverride }}</span>
+          <div class="form-group" ng-show="tableform.$visible">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <i class="glyphicon glyphicon-time"></i>
+                </span>
+                <input type="text" class="form-control input-sm" datetimepicker datetimepicker-options="{format:'HH:mm:ss'}" name="timeOutOverride" ng-model="row.timeOutOverride">
+              </div>
+          </div>
+        </td>
+        <td>
+          <span editable-text="row.remarks" e-form="tableform" onbeforesave="isValidRow(row, $data)">
+            {{ row.remarks }}
+          </span>
+        </td>
+      </tr>
+    </table>
+    
+    <div class="modal-footer">
+      <div class="btn-edit">
+        <select class="btn btn-default pull-left" ng-disabled="tableform.$visible" ng-options="dateRange for dateRange in vm.semiMonthlyDataRange" ng-model="vm.selectedDateRange">
+        </select>
+        <button type="button" class="btn btn-default" ng-show="!tableform.$visible" ng-click="vm.goBack()">Back</button>
+        <button type="button" class="btn btn-default" ng-show="!tableform.$visible" ng-click="tableform.$show()">Edit</button>
+        <button ng-disabled="true" type="button" class="btn btn-primary" ng-show="!tableform.$visible">Generate Timesheet</button>
+      </div>
+      <div class="btn-form" ng-show="tableform.$visible">
+        <button ng-disabled="true" type="submit" ng-disabled="tableform.$waiting" class="btn">Add Row</button>
+        <button type="submit" ng-disabled="tableform.$waiting" class="btn btn-primary">Save</button>
+        <button type="button" ng-disabled="tableform.$waiting" ng-click="tableform.$cancel()" class="btn btn-default">Cancel</button>
+      </div>
+    </div>
+  </form>
+  
+  <footer-generic></footer-generic>
+</div>

@@ -7,7 +7,7 @@
     return {
       restrict: 'EA',
       scope: {
-        content : '=content'
+        content: '=content'
       },
       templateUrl: '/common/directives/pageHeader/pageHeader.template.html'
     };

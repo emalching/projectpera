@@ -1,0 +1,68 @@
+<div ng-hide="vm.currentUser.userType != 'admin'">
+  <page-header content="vm.pageHeader"></page-header>
+  
+  <h3>{{ vm.message }}</h3>
+  
+  <div role="alert" ng-show="vm.formError" class="alert alert-danger"><strong>Error! </strong>{{ vm.formError }}</div>
+  
+  <div ng-show="vm.message == ''">
+    <table class="table table-bordered table-hover table-condensed table-striped">
+      <tr style="font-weight: bold">
+        <td class="col-xs-2">Card Number</td>
+        <td class="col-xs-2">Username</td>
+        <td class="col-xs-2">User Type</td>
+        <td class="col-xs-2">Display Name</td>
+        <td class="col-xs-2">Email Address</td>
+        <td class="col-xs-1">Quick Link</td>
+        <td class="col-xs-1">Action</td>
+      </tr>
+      <tr ng-repeat="row in vm.data | orderBy:'cardNumber'">
+        <td>
+          <span e-form="rowform">
+            {{ row.cardNumber }}
+          </span>
+        </td>
+        <td>
+          <span e-form="rowform">
+            {{ row.username }}
+          </span>
+        </td>
+        <td>
+          <span editable-select="row.userType" e-name="userType" e-form="rowform" e-ng-options="s.value as s.text for s in vm.userTypes">
+            {{ row.userType }}
+          </span>
+        </td>
+        <td>
+          <span e-form="rowform">
+            {{ row.displayName }}
+          </span>
+        </td>
+        <td>
+          <span e-form="rowform">
+            {{ row.emailAddress }}
+          </span>
+        </td>
+        <td>
+          <span style="cursor: hand;cursor: pointer;" ng-click="vm.goToProfile(row.cardNumber)">
+            <img src="/images/onlinewebfonts-accountprofilecard-56ABE4.svg" alt="Admin" title="View profile" style="width:20px;height:20px;display: inline-block" class="img-responsive">
+          </span>
+          &nbsp;
+          <span style="cursor: hand;cursor: pointer;">
+            <img src="/images/onlinewebfonts-record-00AC56.svg" alt="Timesheet" title="View timesheet" style="width:20px;height:20px;display: inline-block" class="img-responsive">
+          </span>
+        </td>
+        <td style="white-space: nowrap">
+          <form editable-form name="rowform" onbeforesave="saveUser($data, row.cardNumber)" ng-show="rowform.$visible" class="form-buttons form-inline">
+            <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">Save</button>
+            <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">Cancel</button>
+          </form>
+          <div class="buttons" ng-show="!rowform.$visible">
+            <button type="button" class="btn btn-primary" ng-click="rowform.$show()">Edit</button>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  
+  <footer-generic></footer-generic>
+</div>

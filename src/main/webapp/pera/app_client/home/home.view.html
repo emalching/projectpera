@@ -1,0 +1,32 @@
+<navigation></navigation>
+
+<div class="vertical-center" ng-hide="!vm.isLoggedIn">
+  <div>
+    <div class="col-md-{{ vm.grid }} col-xs-6" style="padding-top:20px;padding-bottom:20px;">
+      <div style="cursor: hand;cursor: pointer;" ng-click="vm.goToProfile()">
+        <img src="images/onlinewebfonts-accountprofilecard-56ABE4.svg" alt="User Profile" style="width:128px;height:128px;" class="center-block img-responsive">
+        <span style="display:block;text-align:center;">User Profile</span>
+      </div>
+    </div>
+    <div class="col-md-{{ vm.grid }} col-xs-6" style="padding-top:20px;padding-bottom:20px;">
+      <div style="cursor: hand;cursor: pointer;" ng-click="vm.goToTimesheet()">
+        <img src="images/onlinewebfonts-record-00AC56.svg" alt="Timesheet" style="width:128px;height:128px;" class="center-block img-responsive">
+        <span style="display:block;text-align:center;">Timesheet</span>
+      </div>
+    </div>
+    <div class="col-md-{{ vm.grid }} col-xs-6" style="padding-top:20px;padding-bottom:20px;" ng-hide="vm.currentUser.userType != 'admin'">
+      <div style="cursor: hand;cursor: pointer;">
+        <img src="images/logo.svg" alt="???" style="width:128px;height:128px;" class="center-block img-responsive">
+        <span style="display:block;text-align:center;">???</span>
+      </div>
+    </div>
+    <div class="col-md-{{ vm.grid }} col-xs-6" style="padding-top:20px;padding-bottom:20px;" ng-hide="vm.currentUser.userType != 'admin'">
+      <div style="cursor: hand;cursor: pointer;" ng-click="vm.goToAdmin()">
+        <img src="images/onlinewebfonts-administration-EB4F38.svg" alt="Admin" style="width:128px;height:128px;" class="center-block img-responsive">
+        <span style="display:block;text-align:center;">Admin</span>
+      </div>
+    </div>
+    <br/>
+    <footer-generic class="text-center"></footer-generic>
+  </div>
+</div>

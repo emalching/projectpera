@@ -1,0 +1,16 @@
+package aero.champ.projectpera.repository.sqlserver;
+
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+
+import aero.champ.projectpera.BO.Staff;
+import aero.champ.projectpera.BO.Transaction;
+
+public interface TransactionRepository extends CrudRepository<Transaction, Integer> {
+
+	public List<Staff> retrieveTimeInOut(String targetDate);
+	
+	public List<Staff> retrieveTimeInOut(String startDate, String endDate);
+	
+}

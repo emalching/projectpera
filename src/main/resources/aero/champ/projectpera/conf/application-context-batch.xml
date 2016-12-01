@@ -1,37 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
 				<ref bean="dailyTimeRetrieverBatchTrigger" />
+				<ref bean="timesheetReportGeneratorBatchTrigger1st" />
+				<ref bean="timesheetReportGeneratorBatchTrigger16th" />
+				<ref bean="reportEmailSenderBatchTrigger1st" />
+				<ref bean="reportEmailSenderBatchTrigger16th" />
+			</list>
+		</property>
+		<property name="globalJobListeners">
+			<list>
+				<ref bean="jobListener" />
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="dailyTimeRetrieverJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="dailyTimeRetriever" />
+		<property name="targetMethod" value="saveTime" />
+		<property name="concurrent" value="true" />
+	</bean>
 
-	<bean id="timesheetReportGeneratorJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-    	<property name="targetObject"	ref="timesheetReportGenerator"/>
-    	<property name="targetMethod"	value="generateCutOffReport"/>
-    	<property name="concurrent"		value="true"/>
+	<bean id="dailyTimeRetrieverBatchTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="dailyTimeRetrieverJob" />
+		<!-- GMT 16:10, every day -->
+		<!-- Philippine Time 12:10, every day -->
+		<property name="cronExpression" value="0 10 16 1/1 * ? *" />
+		<!-- <property name="cronExpression" value="0 40 16 1/1 * ? *" />-->
+	</bean>
+
+	<bean id="timesheetReportGeneratorJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="timesheetReportGenerator" />
+		<property name="targetMethod" value="generateCutOffReport" />
+		<property name="concurrent" value="true" />
+	</bean>
+
+	<bean id="timesheetReportGeneratorBatchTrigger1st"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="timesheetReportGeneratorJob" />
+		<!-- GMT 16:20, last day of the month -->
+		<!-- Philippine Time 12:20, 1st of every month -->
+		<property name="cronExpression" value="0 20 16 L * ? *" />
+		<!-- <property name="cronExpression" value="0 28 2 1/1 * ? *" />-->
+	</bean>
+	
+	<bean id="timesheetReportGeneratorBatchTrigger16th"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="timesheetReportGeneratorJob" />
+		<!-- GMT 16:20, 15th of every month -->
+		<!-- Philippine Time 12:20, 16th of every month -->
+		<property name="cronExpression" value="0 20 16 15 1/1 ? *" />
+	</bean>
+    
+    <bean id="reportEmailSenderJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+      <property name="jobClass" value="aero.champ.projectpera.scheduler.scheduled.ReportEmailSender"/>
+      <property name="jobDataAsMap">
+        <map>
+          <entry key="templateMessage">
+	        <ref bean="templateMessage"/>
+          </entry>
+          <entry key="mailSender">
+            <ref bean="mailSender"/>
+          </entry>
+        </map>
+      </property>
     </bean>
     
-    <bean id="timesheetReportGeneratorBatchTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-    	<property name="jobDetail"		ref="timesheetReportGeneratorJob"/>
-    	<property name="cronExpression"	value="5 * * ? * * *"/>
-    </bean>
+	<bean id="reportEmailSenderBatchTrigger1st"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="reportEmailSenderJob" />
+		<!-- GMT 16:30, last day of the month -->
+		<!-- Philippine Time 12:30, 1st of every month -->
+		<property name="cronExpression" value="0 30 16 L * ? *" />
+		<!-- <property name="cronExpression" value="0 55 7 1/1 * ? *" />-->
+	</bean>
+	
+	<bean id="reportEmailSenderBatchTrigger16th"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="reportEmailSenderJob" />
+		<!-- GMT 16:30, 15th of every month -->
+		<!-- Philippine Time 12:30, 16th of every month -->
+		<property name="cronExpression" value="0 30 16 15 1/1 ? *" />
+	</bean>
     
-    <bean id="dailyTimeRetrieverJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-    	<property name="targetObject"	ref="dailyTimeRetriever"/>
-    	<property name="targetMethod"	value="saveTimeToday"/>
-    	<property name="concurrent"		value="true"/>
-    </bean>
-    
-    <bean id="dailyTimeRetrieverBatchTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-    	<property name="jobDetail"		ref="dailyTimeRetrieverJob"/>
-    	<property name="cronExpression"	value="5 * * ? * * *"/>
-    </bean>
+	<bean id="jobListener"
+		class="aero.champ.projectpera.scheduler.scheduled.GlobalJobListener">
+	</bean>
 
 </beans>

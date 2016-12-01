@@ -1,4 +1,4 @@
-(function() {
+(function () {
   angular
     .module('peraApp')
     .controller('loginCtrl', loginCtrl);
@@ -8,11 +8,11 @@
     var vm = this;
     
     vm.credentials = {
-      email : "",
-      password : ""
+      username: "",
+      password: ""
     };
     
-    vm.onSubmit = function() {
+    vm.onSubmit = function () {
       vm.formError = "";
       if (!vm.credentials.username || !vm.credentials.password) {
         vm.formError = "All fields required, please try again.";
@@ -20,11 +20,11 @@
       } else {
         authentication
           .login(vm.credentials)
-          .error(function(err) {
+          .error(function (err) {
             vm.formError = err;
           })
-          .success(function(user) {
-            $location.path('/profile/' + user.cardNumber);
+          .success(function (data) {
+            $location.path('/');
           });
       }
     };

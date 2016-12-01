@@ -1,3 +1,8 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 .pera-title {
   padding-left: 15px;
 }
@@ -17,9 +22,135 @@
 .bottom30 { margin-bottom:30px; }
 
 .vertical-center {
-  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
-  min-height: 100vh; /* These two lines are counted as one :-)       */
-
   display: flex;
+  justify-content: center;
   align-items: center;
+  
+  height: 100%;
+  
+  padding: 20px;
+}
+
+.table>tbody>tr>td>.editable-wrap {
+  display: inline-block;
+  white-space: nowrap;
+  margin-left: 0px;
+  width: 100%;
+}
+
+
+
+
+/*
+ * Black navbar style
+ */
+#navbar-black.navbar-default { /* #3C3C3C - #222222 */
+    font-size: 14px;
+    background-color: rgba(34, 34, 34, 1);
+    background: -webkit-linear-gradient(top, rgba(60, 60, 60, 1) 0%, rgba(34, 34, 34, 1) 100%);
+    background: linear-gradient(to bottom, rgba(60, 60, 60, 1) 0%, rgba(34, 34, 34, 1) 100%);
+    border: 0px;
+	border-radius: 0;
+}
+#navbar-black.navbar-default .navbar-nav>li>a:hover,
+#navbar-black.navbar-default .navbar-nav>li>a:focus,
+#navbar-black.navbar-default .navbar-nav>li>ul>li>a:hover, 
+#navbar-black.navbar-default .navbar-nav>li>ul>li>a:focus, 
+#navbar-black.navbar-default .navbar-nav>.active>a,
+#navbar-black.navbar-default .navbar-nav>.active>a:hover,
+#navbar-black.navbar-default .navbar-nav>.active>a:focus {   
+	color: rgba(255, 255, 255, 1);
+    background-color: rgba(0, 0, 0, 1);
+    background: -webkit-linear-gradient(top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%);
+}
+#sidebar-black, #column-black {
+  	background-color: #222222;
+}
+#navbar-black.navbar-default .navbar-toggle {
+    border-color: #222222; 
+}
+#navbar-black.navbar-default .navbar-toggle:hover,
+#navbar-black.navbar-default .navbar-toggle:focus {
+    background-color: #3C3C3C;
+}
+#navbar-black.navbar-default .navbar-nav>li>a,
+#navbar-black.navbar-default .navbar-nav>li>ul>li>a, 
+#navbar-black.navbar-default .navbar-brand {
+    color: #999999; 
+}
+#navbar-black.navbar-default .navbar-toggle .icon-bar,
+#navbar-black.navbar-default .navbar-toggle:hover .icon-bar,
+#navbar-black.navbar-default .navbar-toggle:focus .icon-bar {
+    background-color: #ffffff;
+}
+@media (min-width: 768px) {
+  #dashboard-black {
+	background-color: #3C3C3C;
+  }
+}
+
+/* CSS used here will be applied after bootstrap.css */
+/*
+ * dashboard (add to your bootstrap)
+ */
+
+.sidebar-form {
+  padding: 7px 15px 13px 15px;
+}
+@media (min-width: 768px) {
+  #page-wrapper5 {
+    margin-top: 15px;
+	margin-left: 150px;
+  }
+  .dashboard-nav {
+	left: 0;
+    list-style: none;
+    height: 100%;
+    margin: 0;
+    overflow-y: auto;
+    padding: 0;
+    padding-top: 10px;
+	position: fixed;
+    top: 50px;
+    width: 150px;
+    z-index: 1;
+  } 
+  .dashboard-nav .navbar-collapse {
+    padding: 0;
+    max-height: none;
+  }
+  .dashboard-nav ul {
+    float: none;
+	width: 100%;
+  }
+  .dashboard-nav ul:not {
+    display: block;
+  }
+  .dashboard-nav li {
+    float: none;
+    display: block;
+  }
+  .dashboard-nav li a {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .dashboard-nav .open .dropdown-menu {
+    position: static;
+    float: none;
+    width: auto;
+    margin: 0;
+    padding: 5px 0;
+    background-color: transparent;
+    border: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+  .dashboard-nav .open .dropdown-menu > li > a {
+    padding: 5px 15px 5px 25px;
+  }
+  .dashboard-nav .open > a > b.caret {
+  border-top: none;
+  border-bottom: 4px solid;
+  }
 }

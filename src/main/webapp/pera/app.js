@@ -17,19 +17,29 @@ var routesApi = require('./app_api/routes/index');
 var app = express();
 
 var appClientFiles = [
-  'app_client/app.js',
+  'app_client/app_client.js',
+  'app_client/admin/admin.controller.js',
+  'app_client/holidays/holidays.controller.js',
+  'app_client/home/home.controller.js',
   'app_client/login/login.controller.js',
   'app_client/profile/profile.controller.js',
+  'app_client/register/register.controller.js',
+  'app_client/timesheet/timesheet.controller.js',
+  'app_client/users/users.controller.js',
   'app_client/common/services/authentication.service.js',
+  'app_client/common/services/holidayData.service.js',
   'app_client/common/services/staffData.service.js',
+  'app_client/common/services/userData.service.js',
   'app_client/common/directives/footerGeneric/footerGeneric.directive.js',
+  'app_client/common/directives/navigation/navigation.controller.js',
   'app_client/common/directives/navigation/navigation.directive.js',
-  'app_client/common/directives/pageHeader/pageHeader.directive.js'
+  'app_client/common/directives/pageHeader/pageHeader.directive.js',
+  'app_client/common/filters/propsFilter.filter.js',
 ];
-var uglified = uglifyJs.minify(appClientFiles, { compress : false });
+var uglified = uglifyJs.minify(appClientFiles, { compress: false });
 
-fs.writeFile('public/pera.min.js', uglified.code, function (err){
-  if(err) {
+fs.writeFile('public/pera.min.js', uglified.code, function (err) {
+  if (err) {
     console.log(err);
   } else {
     console.log("Script generated and saved:", 'pera.min.js');
@@ -47,12 +57,12 @@ app.use(express.static(path.join(__dirname, 'app_client')));
 app.use(passport.initialize());
 app.use('/api', routesApi);
 
-app.use(function(req, res) {
+app.use(function (req, res) {
   res.sendFile(path.join(__dirname, 'app_client', 'index.html'));
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
@@ -63,14 +73,14 @@ app.use(function(req, res, next) {
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
     res.status(401);
-    res.json({"message" : err.name + ": " + err.message});
+    res.json({ "message" : err.name + ": " + err.message });
   }
 });
 
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
+  app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
@@ -81,13 +91,12 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
     error: {}
   });
 });
-
 
 module.exports = app;
