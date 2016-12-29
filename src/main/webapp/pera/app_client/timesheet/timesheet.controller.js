@@ -142,6 +142,7 @@
     };
     
     $scope.updateTimesheet = function() {
+      vm.formError = "";
       staffData
         .updateTimesheetByCardNumber(vm.cardNumber, {
           timeInOutList: vm.data.staff.timeInOutList
