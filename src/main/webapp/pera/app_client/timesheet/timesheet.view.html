@@ -69,7 +69,7 @@
         </select>
         <button type="button" class="btn btn-default" ng-show="!tableform.$visible" ng-click="vm.goBack()">Back</button>
         <button type="button" class="btn btn-default" ng-show="!tableform.$visible" ng-click="tableform.$show()">Edit</button>
-        <button ng-disabled="true" type="button" class="btn btn-primary" ng-show="!tableform.$visible">Generate Timesheet</button>
+        <button type="button" class="btn btn-primary" ng-show="!tableform.$visible" ng-click="vm.generateTimesheet()">Generate Timesheet</button>
       </div>
       <div class="btn-form" ng-show="tableform.$visible">
         <button ng-disabled="true" type="submit" ng-disabled="tableform.$waiting" class="btn">Add Row</button>

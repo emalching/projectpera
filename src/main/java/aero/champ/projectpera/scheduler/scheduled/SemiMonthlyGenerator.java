@@ -3,7 +3,9 @@ package aero.champ.projectpera.scheduler.scheduled;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -161,6 +165,129 @@ public class SemiMonthlyGenerator implements ReportGenerator {
 
 		LOG.info("done");
 	}
+	
+	public void generateAdHocReport(String adHocGenerationDateTime, String cardNumber, String periodStart, String periodEnd) {		
+		WebApplicationContext ctx = ContextLoaderListener.getCurrentWebApplicationContext();
+		StaffRepository staffRepository = ctx.getBean(StaffRepository.class);
+
+		String realPath = ctx.getServletContext().getRealPath(REPORTS_PATH);
+		Properties prop = ctx.getBean(Properties.class);
+
+//		String dumpFolder = prop.getProperty(DUMP_FOLDER_UNIX);
+//		if (SystemUtils.IS_OS_WINDOWS) {
+//			dumpFolder = prop.getProperty("dump_folder_test");
+//		}
+		String dumpFolder = ctx.getServletContext().getRealPath("/WEB-INF/classes/");
+		String xlsxTemplatePath = realPath + prop.getProperty(XLSX_TEMPLATE);
+		String pdfTemplatePath = realPath + prop.getProperty(PDF_TEMPLATE);
+		String filename = prop.getProperty(FILENAME);
+		LocalDate adHocStartDate = LocalDate.parse(periodStart, dateFormatterQuery);
+		LocalDate adHocEndDate = LocalDate.parse(periodEnd, dateFormatterQuery);
+		generationDate = LocalDate.now();
+
+		try {
+			JasperDesign xlsxJasperDesign = JRXmlLoader.load(xlsxTemplatePath);
+			JasperReport xlsxJasperReport = JasperCompileManager.compileReport(xlsxJasperDesign);
+
+			JasperDesign pdfJasperDesign = JRXmlLoader.load(pdfTemplatePath);
+			JasperReport pdfJasperReport = JasperCompileManager.compileReport(pdfJasperDesign);
+
+			Staff staff = staffRepository.findByCardNumber(Integer.parseInt(cardNumber));
+
+			String employeeName = staff.getEmployeeName();
+			List<TimeInOut> tioList = staff.getTimeInOutList().stream()
+					.filter(s -> LocalDate.parse(s.getWorkDate(), dateFormatterQuery).isAfter(adHocStartDate.minusDays(1)))
+					.filter(s -> LocalDate.parse(s.getWorkDate(), dateFormatterQuery).isBefore(adHocEndDate.plusDays(1)))
+					.collect(Collectors.toList());
+
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("employeeName", employeeName);
+			parameters.put("teamLeadName", staff.getTeamLeadName());
+			parameters.put("department_position", staff.getDepartment() + "/" + staff.getPosition());
+			parameters.put("projectName", staff.getProject());
+			parameters.put("periodCovered", startDate.format(dateFormatterQuery) + " - " + endDate.format(dateFormatterQuery));
+			parameters.put("realPath", realPath);
+			parameters.put("generationDate", generationDate.format(dateFormatterReport));
+
+			JasperPrint xlsxJasperPrint = JasperFillManager.fillReport(xlsxJasperReport, parameters, new TimeInOutDataSource(tioList));
+			JasperPrint pdfJasperPrint = JasperFillManager.fillReport(pdfJasperReport, parameters, new TimeInOutDataSource(tioList));
+
+			ByteArrayOutputStream xlsxReport = new ByteArrayOutputStream();
+			JRXlsxExporter xlsxExporter = new JRXlsxExporter();
+			xlsxExporter.setParameter(JRXlsExporterParameter.JASPER_PRINT, xlsxJasperPrint);
+			xlsxExporter.setParameter(JRXlsExporterParameter.OUTPUT_STREAM, xlsxReport);
+			xlsxExporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.TRUE);              
+			xlsxExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.TRUE); 
+			xlsxExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.FALSE);
+			xlsxExporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.FALSE);
+			xlsxExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
+			xlsxExporter.exportReport();			
+
+			FileUtils.writeByteArrayToFile(new File(generateAdHocFilename(dumpFolder + "/" + adHocGenerationDateTime, filename, employeeName, XLSX_FILE_TYPE)), xlsxReport.toByteArray());
+			JasperExportManager.exportReportToPdfFile(pdfJasperPrint, generateAdHocFilename(dumpFolder + "/" + adHocGenerationDateTime, filename, employeeName, PDF_FILE_TYPE));
+			
+			generateZipFile(dumpFolder, cardNumber, adHocGenerationDateTime);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+//			return ex.getLocalizedMessage();
+		}
+	}
+	
+	public void generateZipFile(String sourceFolder, String cardNumber, String adHocGenerationDateTime) throws IOException {
+		String zipFile = cardNumber + "_" + adHocGenerationDateTime + ".zip";
+		
+		zipDir(sourceFolder + "/" + adHocGenerationDateTime, sourceFolder + "/" + zipFile);
+	}
+	
+	public void zipDir(String dirName, String nameZipFile) throws IOException {
+        ZipOutputStream zip = null;
+        FileOutputStream fW = null;
+        fW = new FileOutputStream(nameZipFile);
+        zip = new ZipOutputStream(fW);
+        addFolderToZip("", dirName, zip);
+        zip.close();
+        fW.close();
+    }
+
+    private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip) throws IOException {
+        File folder = new File(srcFolder);
+        if (folder.list().length == 0) {
+            addFileToZip(path , srcFolder, zip, true);
+        }
+        else {
+            for (String fileName : folder.list()) {
+                if (path.equals("")) {
+                    addFileToZip(folder.getName(), srcFolder + "/" + fileName, zip, false);
+                } 
+                else {
+                     addFileToZip(path + "/" + folder.getName(), srcFolder + "/" + fileName, zip, false);
+                }
+            }
+        }
+    }
+
+    private void addFileToZip(String path, String srcFile, ZipOutputStream zip, boolean flag) throws IOException {
+        File folder = new File(srcFile);
+        if (flag) {
+            zip.putNextEntry(new ZipEntry(path + "/" +folder.getName() + "/"));
+        }
+        else {
+            if (folder.isDirectory()) {
+                addFolderToZip(path, srcFile, zip);
+            }
+            else {
+                byte[] buf = new byte[1024];
+                int len;
+                FileInputStream in = new FileInputStream(srcFile);
+                zip.putNextEntry(new ZipEntry(path + "/" + folder.getName()));
+                while ((len = in.read(buf)) > 0) {
+                    zip.write(buf, 0, len);
+                }
+                
+                in.close();
+            }
+        }
+    }
 
 	private boolean computeCutOffDates() {
 		generationDate = LocalDateTime.now().plus(8, ChronoUnit.HOURS).toLocalDate();
@@ -186,6 +313,21 @@ public class SemiMonthlyGenerator implements ReportGenerator {
 		StringBuffer sb = new StringBuffer();
 		sb.append(targetFolder);
 		sb.append(generationDate.format(dateFormatterFilename));
+		sb.append("/");
+		sb.append(filename);
+		sb.append("_");
+		sb.append(employeeName);
+		sb.append("_");
+		sb.append(generationDate.format(dateFormatterFilename));
+		sb.append(".");
+		sb.append(fileType);
+
+		return sb.toString();
+	}
+	
+	private String generateAdHocFilename(String targetFolder, String filename, String employeeName, String fileType) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(targetFolder);
 		sb.append("/");
 		sb.append(filename);
 		sb.append("_");

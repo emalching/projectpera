@@ -34,9 +34,9 @@
 
 		<!-- JavaMail -->
 		<dependency>
- 		   <groupId>javax.mail</groupId>
- 		   <artifactId>mail</artifactId>
- 		   <version>1.4.7</version>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4.7</version>
 		</dependency>
 
 		<!-- Quartz Scheduler -->
@@ -75,6 +75,11 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
+			<version>4.3.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
 			<version>4.3.3.RELEASE</version>
 		</dependency>
 
