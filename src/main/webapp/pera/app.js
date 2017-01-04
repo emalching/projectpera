@@ -19,6 +19,7 @@ var app = express();
 var appClientFiles = [
   'app_client/app_client.js',
   'app_client/admin/admin.controller.js',
+  'app_client/batchrun/batchrun.controller.js',
   'app_client/holidays/holidays.controller.js',
   'app_client/home/home.controller.js',
   'app_client/login/login.controller.js',
@@ -27,6 +28,7 @@ var appClientFiles = [
   'app_client/timesheet/timesheet.controller.js',
   'app_client/users/users.controller.js',
   'app_client/common/services/authentication.service.js',
+  'app_client/common/services/batchrunData.service.js',
   'app_client/common/services/holidayData.service.js',
   'app_client/common/services/staffData.service.js',
   'app_client/common/services/userData.service.js',

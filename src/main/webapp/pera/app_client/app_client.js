@@ -1,9 +1,9 @@
 (function() {
   var app = angular.module('peraApp', ['ngRoute', 'ngSanitize', 'xeditable', 'pascalprecht.translate', 'ui.select', 'datetimepicker', 'ui.router']);
   
-  app.run(function(editableOptions, editableThemes) {
+  app.run(['editableOptions', 'editableThemes', function(editableOptions, editableThemes) {
     editableOptions.theme = 'bs3';
-  });
+  }]);
   
   function config($locationProvider, $stateProvider, $translateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise("/")
