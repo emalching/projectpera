@@ -4,3 +4,6 @@
 .project
 .classpath
 *.swp
+*.env
+src/main/webapp/pera/public/pera.min.js
+src/main/webapp/pera/node_modules/
