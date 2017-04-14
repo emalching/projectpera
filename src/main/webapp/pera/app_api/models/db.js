@@ -1,6 +1,9 @@
 var mongoose = require('mongoose');
 
 var dbURI = 'mongodb://vl29.champ.aero:27017/chiemtestdb';
+if (process.env.NODE_ENV === 'production') {
+  dbURI = process.env.MONGOLAB_URI;
+}
 mongoose.connect(dbURI);
 
 // CONNECTION EVENTS

@@ -6,22 +6,9 @@
 	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/data/mongo
     http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
-<!--
-	<bean id="mongoClient" class="com.mongodb.MongoClient">
-		<constructor-arg name="host" value="${db.mongo.host}" />
-		<constructor-arg name="port" value="${db.mongo.port}" />
-	</bean>
 
-	<bean id="mongoDbConnector" init-method="openConnection"
-		destroy-method="closeConnection" class="aero.champ.projectpera.repository.MongoDbConnector">
-		<constructor-arg name="mongoClient" ref="mongoClient" />
-		<constructor-arg name="databaseName" value="${db.mongo.database}" />
-	</bean>
--->
-	<bean id="mongo" class="org.springframework.data.mongodb.core.MongoFactoryBean">
-		<property name="host" value="${db.mongo.host}" />
-		<property name="port" value="${db.mongo.port}" />
-	</bean>
+	<mongo:mongo-client host="${db.mongo.host}" port="${db.mongo.port}"
+		credentials="${db.mongo.username}:${db.mongo.password}@${db.mongo.database}" />
 
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 		<constructor-arg name="mongo" ref="mongo" />
@@ -30,9 +17,11 @@
 
 	<mongo:repositories base-package="aero.champ.projectpera.repository.mongodb"
 		mongo-template-ref="mongoTemplate" />
-<!--
-	<bean id="sqlserver" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
- 	<property name="driverClassName" value="${db.sqlserver.driver}" />
+
+    <!--
+	<bean id="sqlserver"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${db.sqlserver.driver}" />
 		<property name="url" value="${db.sqlserver.url}" />
 		<property name="username" value="${db.sqlserver.username}" />
 		<property name="password" value="${db.sqlserver.password}" />
@@ -41,5 +30,5 @@
 	<bean id="transactionRepository" class="aero.champ.projectpera.repository.sqlserver">
 		<property name="dataSource" ref="sqlServer" />
 	</bean>
--->
+	-->
 </beans>

@@ -164,7 +164,8 @@
       var period = vm.selectedDateRange.split(" ");
       var printIframe = angular.element("<iframe class='hidden'>");
       var formElement = angular.element("<form>");
-      var reportUri = "http://vl29.champ.aero:7070/QuartzSpringMongoDB/rest/reports?cardNumber=" + vm.cardNumber + "&periodStart=" + period[0] + "&periodEnd=" + period[2];
+      //var reportUri = "http://vl29.champ.aero:7070/QuartzSpringMongoDB/rest/reports?cardNumber=" + vm.cardNumber + "&periodStart=" + period[0] + "&periodEnd=" + period[2];
+      var reportUri = "https://champ-pera-rest.herokuapp.com/rest/reports?cardNumber=" + vm.cardNumber + "&periodStart=" + period[0] + "&periodEnd=" + period[2];
       formElement.attr("action", reportUri);
       formElement.attr("method", "post");
       var contentElement = angular.element("<input>").attr("type", "hidden").attr("name",
