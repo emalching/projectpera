@@ -59,7 +59,20 @@ module.exports.login = function (req, res) {
     return;
   }
   
-  passport.authenticate('atlassian-crowd', function (err, user, info) {
+  if (process.env.NODE_ENV === 'heroku') {
+    User
+    .findOne({ "username": req.body.username })
+    .exec(function (err, user) {
+            if (user) {
+      var token = user.generateJwt();
+      sendJSONResponse(res, 200, {
+        "user": user,
+        "token": token
+      });
+            }
+    })(req, res);
+  } else {
+    passport.authenticate('atlassian-crowd', function (err, user, info) {
     if (err) {
       sendJSONResponse(res, 404, err);
       return;
@@ -75,4 +88,5 @@ module.exports.login = function (req, res) {
       sendJSONResponse(res, 401, info);
     }
   })(req, res);
+  }
 };
