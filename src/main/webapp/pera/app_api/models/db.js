@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var dbURI = 'mongodb://vl29.champ.aero:27017/chiemtestdb';
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'heroku') {
   dbURI = process.env.MONGOLAB_URI;
 }
 mongoose.connect(dbURI);
